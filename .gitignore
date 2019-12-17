@@ -1,0 +1,6 @@
+*env
+env*
+.*
+__*
+tests/grassdb
+*.egg-info

@@ -1,0 +1,63 @@
+"""Snakemake GRASS test Snakefile, to run all tests::
+
+    $ snakemake -j 3 all
+    $ snakemake clean
+
+"""
+import os.path as osp
+
+from snakemake_grass import GrassLocation
+
+TEST_DB = 'grassdb'
+
+grass_ll = GrassLocation(TEST_DB, 'lonlat', epsg=4326)
+grass_eu = GrassLocation(TEST_DB, 'eu', epsg=3035)
+
+
+rule new_location:
+    output: grass_ll.location
+    shell: grass_ll('g.proj -p')
+
+rule new_mapset:
+    output: grass_ll.mapset('new_mapset')
+    shell: grass_ll('g.region -p', mapset='new_mapset')
+
+rule new_raster:
+    output: grass_ll.raster('new_raster')
+    shell: grass_ll('r.mapcalc', exp='new_raster=1')
+
+rule new_rasters:
+    input: rules.new_raster.output
+    output: grass_ll.rasters("raster_{i}@new_rasters", i=range(3))
+    shell:
+        grass_ll('g.copy', mapset='new_rasters',
+                 raster=['$(basename {input})@PERMANENT,raster_%i' % i
+                         for i in range(3)])
+
+rule new_vector:
+    output: grass_ll.vector('new_vector')
+    shell: grass_ll('v.in.region', output='new_vector')
+
+rule new_vectors:
+    input: rules.new_vector.output
+    output: grass_ll.vectors("vector_{i}@new_vectors", i=range(3))
+    shell:
+        grass_ll('g.copy', mapset='new_vectors',
+                 vector=['$(basename {input})@PERMANENT,vector_%i' % i
+                         for i in range(3)])
+
+rule new_location_mapset_raster:
+    output: grass_eu.raster('test_raster@test_raster')
+    shell:
+        grass_eu('r.mapcalc', exp='$(basename {output})=1', mapset='test_raster')
+
+rule all:
+    input:
+        rules.new_location.output,
+        rules.new_mapset.output,
+        rules.new_rasters.output,
+        rules.new_vectors.output,
+        rules.new_location_mapset_raster.output
+
+rule clean:
+    shell: "rm -r "+TEST_DB
