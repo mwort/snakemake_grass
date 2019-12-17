@@ -13,9 +13,18 @@ __url__ = "https://github.com/mwort/snakemake_grass"
 
 
 class GrassLocation(object):
+    """Representation of a GRASS location.
+    """
 
     def __init__(self, database, location_name, dafault_mapset='PERMANENT',
                  epsg=None, location_file=None):
+        """
+        :param database: Path to grass database directory
+        :param location_name: Location name
+        :param default_mapset: Mapset to use when none is specified
+        :param epsg: EPSG code to create the location
+        :param location_file: Georeferenced file to base location on, takes precedence over epsg.
+        """
         self.database = database
         self.location_name = location_name
         self.default_mapset = dafault_mapset

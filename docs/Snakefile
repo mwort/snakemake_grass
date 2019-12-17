@@ -1,0 +1,15 @@
+"""Build one-file rst doc using sphinx.
+
+    $ snakemake -f
+"""
+
+rule docs:
+    output:
+        'snakemake_grass.rst'
+    shell:
+        'touch index.rst; ' +
+        'sphinx-apidoc -o . .. ../tests/ ../setup.py; ' +
+        'sphinx-build -b rst . _build snakemake_grass.rst; ' +
+        'mv _build/{output[0]} . ; ' +
+        'rm -r _build index.rst modules.rst'
+    
