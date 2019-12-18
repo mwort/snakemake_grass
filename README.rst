@@ -34,7 +34,7 @@ This Python module provides an interface between the two.
 
 Docs and examples
 -----------------
-`API documentation <docs/snakemake.rst>`_
+`API documentation <https://mwort.github.io/snakemake_grass>`_
 
 Here is a quick example Snakefile with one wildcard/template rule and two
 target rules::

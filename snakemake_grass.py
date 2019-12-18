@@ -11,19 +11,22 @@ __license__ = "MIT"
 __url__ = "https://github.com/mwort/snakemake_grass"
 
 
-class GrassLocation(object):
-    """Representation of a GRASS location.
+class GrassLocation:
+    """Representation of a GRASS location with exec method.
+
+    The GRASS location will be created if needed if ``location_file``
+    or ``epsg`` is given, otherwise it has to exist already.
+
+    :param database: Path to grass database directory
+    :param location_name: Location name
+    :param default_mapset: Mapset to use when none is specified
+    :param epsg: EPSG code to create the location from
+    :param location_file: Georeferenced file to base location on, takes
+        precedence over epsg.
     """
 
     def __init__(self, database, location_name, dafault_mapset='PERMANENT',
                  epsg=None, location_file=None):
-        """
-        :param database: Path to grass database directory
-        :param location_name: Location name
-        :param default_mapset: Mapset to use when none is specified
-        :param epsg: EPSG code to create the location
-        :param location_file: Georeferenced file to base location on, takes precedence over epsg.
-        """
         self.database = database
         self.location_name = location_name
         self.default_mapset = dafault_mapset
@@ -39,32 +42,61 @@ class GrassLocation(object):
 
     @property
     def location_path(self):
+        """Path to location directory."""
         return osp.join(self.database, self.location_name)
 
     @property
     def location(self):
+        """File representation of the location used in input/output.
+        """
         return osp.join(self.location_path, 'PERMANENT', 'PROJ_INFO')
 
     def mapset_path(self, name=None):
+        """Path to mapset directory.
+
+        If no ``name`` is given, fall back to ``default_mapset``.
+        """
         ms_name = self._first_or_raise(name, self.default_mapset)
         return osp.join(self.location_path, ms_name)
 
     def mapset(self, name=None, output=True):
+        """File representation of a mapset.
+
+        If no ``name`` is given, fall back to ``default_mapset``.
+        If used as input, warnings can be suppressed by
+        setting ``output=False``.
+        """
         pth = osp.join(self.mapset_path(name), 'WIND')
         return pth if output else ancient(pth)
 
     def map_mapset(self, name):
+        """Return map name and mapset from ``name@mapset``.
+
+        If no @mapset provided, return ``default_mapset``.
+        """
         nm = name.split('@')
         ms = (nm[1] if len(nm) == 2
               else self._first_or_raise(self.default_mapset))
         return nm[0], ms
 
     def vector(self, name, output=True):
+        """File representation of a vector map.
+
+        If used as input, warnings can be suppressed by
+        setting ``output=False``.
+        """
         nm, ms = self.map_mapset(name)
         path = osp.join(self.location_path, ms, 'vector', nm)
         return directory(path) if output else path
 
     def vectors(self, namespattern, output=True, **kwargs):
+        """Representation of several vector maps.
+
+        :param namespattern: Either a list/tuple/dict as input to
+            ``vector`` or an expand pattern with variables provided
+            as ``kwargs``.
+        :returns: list or dict if dict was given.
+        """
         if type(namespattern) is str:
             exp = expand(self.vector(namespattern, output=False), **kwargs)
             return directory(exp) if output else exp
@@ -78,10 +110,19 @@ class GrassLocation(object):
                              % namespattern)
 
     def raster(self, name):
+        """File representation of a raster map.
+        """
         nm, ms = self.map_mapset(name)
         return osp.join(self.location_path, ms, 'cellhd', nm)
 
     def rasters(self, namespattern, **kwargs):
+        """Representation of several raster maps.
+
+        :param namespattern: Either a list/tuple/dict as input to
+            ``raster`` or an expand pattern with variables provided
+            as ``kwargs``.
+        :returns: list or dict if dict was given.
+        """
         if type(namespattern) is str:
             return expand(self.raster(namespattern), **kwargs)
         elif type(namespattern) in [list, tuple]:
@@ -93,12 +134,30 @@ class GrassLocation(object):
                              % namespattern)
 
     def clean_output(self, paths='{output}'):
+        """Explicitly clean output remnants and empty dirs.
+
+        This is automatically done in `__call__/exec` but can be
+        switched off with `clean=False` if called multiple times.
+        :param paths: Map file representation.
+        """
         cleanf = ('snakemake_grass.clean_output("%s", "%s")'
                   % (self.location_path, paths))
         return "python -c 'import snakemake_grass; %s'; " % cleanf
 
     def exec(self, command, mapset=None, clean=True, *args, **kwargs):
         """Exec grass with snakemake creating location/mapset as needed.
+
+        :param command: Any statement executed in grass. More parts or
+            keyword arguements can be parsed as ``args/kwargs``. This
+            may be a grass command, a shell command/script or a python
+            script via ``python script.py``.
+        :param mapset: Which mapset to execute the command in. Will be
+            created if it doesnt exists (careful with region settings,
+            it's best to set a default region in PERMANENT using
+            `g.region -s`). Defaults to ``default_mapset``.
+        :param clean: Dont clean empty dirs and map remnants. Useful
+            for disabling if calling ``exec`` multiple times in a shell
+            block. The second call would clean the output of the first.
         """
         command += ' '+' '.join(map(str, args))
         for k, v in kwargs.items():
@@ -120,7 +179,7 @@ class GrassLocation(object):
         return cf+clocation+variables+gcmd
 
     def __call__(self, *args, **kwargs):
-        """Alias for self.exec."""
+        """Alias for :meth:`.exec`."""
         return self.exec(*args, **kwargs)
 
 
@@ -129,16 +188,26 @@ def path_to_map(path, mapset=True):
     """
     name = "$(basename %s)" % path
     ms = "@$(basename $(dirname $(dirname %s)))" % path if mapset else ''
-    return  name + ms
+    return name + ms
 
 
 def input_to_map(index=None):
+    """Turn snakemake {input} keyword to a valid map name@mapset again.
+
+    :param index: May be an int or str depending on the type of the input,
+        i.e. list or dict.
+    """
     if index is not None:
         index = '[%s]' % index if type(index) is int else '.%s' % index
     return path_to_map('{input%s}' % (index or ''))
 
 
 def output_to_map(index=None):
+    """Turn snakemake {output} keyword to a valid map name again.
+
+    :param index: May be an int or str depending on the type of the output,
+        i.e. list or dict.
+    """
     if index is not None:
         index = '[%s]' % index if type(index) is int else '.%s' % index
     return path_to_map('{output%s}' % (index or ''), mapset=False)
@@ -195,6 +264,7 @@ def clean_vector(path):
 
 
 def clean_raster(path):
+    """Remove raster without using grass as snakemake partially removes it."""
     name = osp.basename(path)
     ms_path = osp.dirname(osp.dirname(path))
     for d in "cats cell cell_misc colr fcell hist".split():

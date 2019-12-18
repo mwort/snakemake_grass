@@ -39,62 +39,133 @@
 <dt id="snakemake_grass.GrassLocation">
 <em class="property">class </em><code class="sig-prename descclassname">snakemake_grass.</code><code class="sig-name descname">GrassLocation</code><span class="sig-paren">(</span><em class="sig-param">database</em>, <em class="sig-param">location_name</em>, <em class="sig-param">dafault_mapset='PERMANENT'</em>, <em class="sig-param">epsg=None</em>, <em class="sig-param">location_file=None</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.GrassLocation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Representation of a GRASS location.</p>
+<p>Representation of a GRASS location with exec method.</p>
+<p>The GRASS location will be created if needed if <code class="docutils literal notranslate"><span class="pre">location_file</span></code>
+or <code class="docutils literal notranslate"><span class="pre">epsg</span></code> is given, otherwise it has to exist already.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database</strong> – Path to grass database directory</p></li>
+<li><p><strong>location_name</strong> – Location name</p></li>
+<li><p><strong>default_mapset</strong> – Mapset to use when none is specified</p></li>
+<li><p><strong>epsg</strong> – EPSG code to create the location from</p></li>
+<li><p><strong>location_file</strong> – Georeferenced file to base location on, takes
+precedence over epsg.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="method">
 <dt id="snakemake_grass.GrassLocation.clean_output">
 <code class="sig-name descname">clean_output</code><span class="sig-paren">(</span><em class="sig-param">paths='{output}'</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.GrassLocation.clean_output" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Explicitly clean output remnants and empty dirs.</p>
+<p>This is automatically done in <cite>__call__/exec</cite> but can be
+switched off with <cite>clean=False</cite> if called multiple times.
+:param paths: Map file representation.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="snakemake_grass.GrassLocation.exec">
 <code class="sig-name descname">exec</code><span class="sig-paren">(</span><em class="sig-param">command</em>, <em class="sig-param">mapset=None</em>, <em class="sig-param">clean=True</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.GrassLocation.exec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Exec grass with snakemake creating location/mapset as needed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>command</strong> – Any statement executed in grass. More parts or
+keyword arguements can be parsed as <code class="docutils literal notranslate"><span class="pre">args/kwargs</span></code>. This
+may be a grass command, a shell command/script or a python
+script via <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">script.py</span></code>.</p></li>
+<li><p><strong>mapset</strong> – Which mapset to execute the command in. Will be
+created if it doesnt exists (careful with region settings,
+it’s best to set a default region in PERMANENT using
+<cite>g.region -s</cite>). Defaults to <code class="docutils literal notranslate"><span class="pre">default_mapset</span></code>.</p></li>
+<li><p><strong>clean</strong> – Dont clean empty dirs and map remnants. Useful
+for disabling if calling <code class="docutils literal notranslate"><span class="pre">exec</span></code> multiple times in a shell
+block. The second call would clean the output of the first.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="snakemake_grass.GrassLocation.location">
 <em class="property">property </em><code class="sig-name descname">location</code><a class="headerlink" href="#snakemake_grass.GrassLocation.location" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>File representation of the location used in input/output.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="snakemake_grass.GrassLocation.location_path">
 <em class="property">property </em><code class="sig-name descname">location_path</code><a class="headerlink" href="#snakemake_grass.GrassLocation.location_path" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Path to location directory.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="snakemake_grass.GrassLocation.map_mapset">
 <code class="sig-name descname">map_mapset</code><span class="sig-paren">(</span><em class="sig-param">name</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.GrassLocation.map_mapset" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Return map name and mapset from <code class="docutils literal notranslate"><span class="pre">name&#64;mapset</span></code>.</p>
+<p>If no &#64;mapset provided, return <code class="docutils literal notranslate"><span class="pre">default_mapset</span></code>.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="snakemake_grass.GrassLocation.mapset">
 <code class="sig-name descname">mapset</code><span class="sig-paren">(</span><em class="sig-param">name=None</em>, <em class="sig-param">output=True</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.GrassLocation.mapset" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>File representation of a mapset.</p>
+<p>If no <code class="docutils literal notranslate"><span class="pre">name</span></code> is given, fall back to <code class="docutils literal notranslate"><span class="pre">default_mapset</span></code>.
+If used as input, warnings can be suppressed by
+setting <code class="docutils literal notranslate"><span class="pre">output=False</span></code>.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="snakemake_grass.GrassLocation.mapset_path">
 <code class="sig-name descname">mapset_path</code><span class="sig-paren">(</span><em class="sig-param">name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.GrassLocation.mapset_path" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Path to mapset directory.</p>
+<p>If no <code class="docutils literal notranslate"><span class="pre">name</span></code> is given, fall back to <code class="docutils literal notranslate"><span class="pre">default_mapset</span></code>.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="snakemake_grass.GrassLocation.raster">
 <code class="sig-name descname">raster</code><span class="sig-paren">(</span><em class="sig-param">name</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.GrassLocation.raster" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>File representation of a raster map.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="snakemake_grass.GrassLocation.rasters">
 <code class="sig-name descname">rasters</code><span class="sig-paren">(</span><em class="sig-param">namespattern</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.GrassLocation.rasters" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Representation of several raster maps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>namespattern</strong> – Either a list/tuple/dict as input to
+<code class="docutils literal notranslate"><span class="pre">raster</span></code> or an expand pattern with variables provided
+as <code class="docutils literal notranslate"><span class="pre">kwargs</span></code>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list or dict if dict was given.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="method">
 <dt id="snakemake_grass.GrassLocation.vector">
 <code class="sig-name descname">vector</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">output=True</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.GrassLocation.vector" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>File representation of a vector map.</p>
+<p>If used as input, warnings can be suppressed by
+setting <code class="docutils literal notranslate"><span class="pre">output=False</span></code>.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="snakemake_grass.GrassLocation.vectors">
 <code class="sig-name descname">vectors</code><span class="sig-paren">(</span><em class="sig-param">namespattern</em>, <em class="sig-param">output=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.GrassLocation.vectors" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Representation of several vector maps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>namespattern</strong> – Either a list/tuple/dict as input to
+<code class="docutils literal notranslate"><span class="pre">vector</span></code> or an expand pattern with variables provided
+as <code class="docutils literal notranslate"><span class="pre">kwargs</span></code>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list or dict if dict was given.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -112,7 +183,8 @@ to create locations, mapsets, rasters and vectors. This includes:
 <dl class="function">
 <dt id="snakemake_grass.clean_raster">
 <code class="sig-prename descclassname">snakemake_grass.</code><code class="sig-name descname">clean_raster</code><span class="sig-paren">(</span><em class="sig-param">path</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.clean_raster" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Remove raster without using grass as snakemake partially removes it.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="snakemake_grass.clean_vector">
@@ -123,12 +195,26 @@ to create locations, mapsets, rasters and vectors. This includes:
 <dl class="function">
 <dt id="snakemake_grass.input_to_map">
 <code class="sig-prename descclassname">snakemake_grass.</code><code class="sig-name descname">input_to_map</code><span class="sig-paren">(</span><em class="sig-param">index=None</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.input_to_map" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Turn snakemake {input} keyword to a valid map <a class="reference external" href="mailto:name&#37;&#52;&#48;mapset">name<span>&#64;</span>mapset</a> again.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>index</strong> – May be an int or str depending on the type of the input,
+i.e. list or dict.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
 <dt id="snakemake_grass.output_to_map">
 <code class="sig-prename descclassname">snakemake_grass.</code><code class="sig-name descname">output_to_map</code><span class="sig-paren">(</span><em class="sig-param">index=None</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.output_to_map" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Turn snakemake {output} keyword to a valid map name again.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>index</strong> – May be an int or str depending on the type of the output,
+i.e. list or dict.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
 <dt id="snakemake_grass.path_to_map">
