@@ -1,7 +1,6 @@
 """Snakemake GRASS interface."""
 import os
 import os.path as osp
-import shutil
 
 from snakemake.io import ancient, directory, expand
 
@@ -125,6 +124,26 @@ class GrassLocation(object):
         return self.exec(*args, **kwargs)
 
 
+def path_to_map(path, mapset=True):
+    """Turn a Snakemake GRASS DB path into a GRASS map name.
+    """
+    name = "$(basename %s)" % path
+    ms = "@$(basename $(dirname $(dirname %s)))" % path if mapset else ''
+    return  name + ms
+
+
+def input_to_map(index=None):
+    if index is not None:
+        index = '[%s]' % index if type(index) is int else '.%s' % index
+    return path_to_map('{input%s}' % (index or ''))
+
+
+def output_to_map(index=None):
+    if index is not None:
+        index = '[%s]' % index if type(index) is int else '.%s' % index
+    return path_to_map('{output%s}' % (index or ''), mapset=False)
+
+
 def clean_output(pathtolocation, output_paths):
     """Removes GRASS components from location using paths to judge what to do.
 
@@ -159,6 +178,8 @@ def clean_output(pathtolocation, output_paths):
 
 def clean_vector(path):
     """Remove vector without using grass as snakemake partially removes it."""
+    import shutil
+
     try:
         shutil.rmtree(path)
     except (OSError, IOError):

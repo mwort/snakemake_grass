@@ -6,9 +6,9 @@
 """
 import os.path as osp
 
-from snakemake_grass import GrassLocation
+from snakemake_grass import *
 
-TEST_DB = 'grassdb'
+TEST_DB = './grassdb/'
 
 grass_ll = GrassLocation(TEST_DB, 'lonlat', epsg=4326)
 grass_eu = GrassLocation(TEST_DB, 'eu', epsg=3035)
@@ -31,7 +31,7 @@ rule new_rasters:
     output: grass_ll.rasters("raster_{i}@new_rasters", i=range(3))
     shell:
         grass_ll('g.copy', mapset='new_rasters',
-                 raster=['$(basename {input})@PERMANENT,raster_%i' % i
+                 raster=[input_to_map()+',raster_%i' % i
                          for i in range(3)])
 
 rule new_vector:
@@ -43,8 +43,7 @@ rule new_vectors:
     output: grass_ll.vectors("vector_{i}@new_vectors", i=range(3))
     shell:
         grass_ll('g.copy', mapset='new_vectors',
-                 vector=['$(basename {input})@PERMANENT,vector_%i' % i
-                         for i in range(3)])
+                 vector=[input_to_map()+','+output_to_map(i) for i in range(3)])
 
 rule new_location_mapset_raster:
     output: grass_eu.raster('test_raster@test_raster')
