@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>snakemake_grass module &#8212; snakemake_grass  documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">snakemake_grass  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-snakemake_grass">
+<span id="snakemake-grass-module"></span><h1>snakemake_grass module<a class="headerlink" href="#module-snakemake_grass" title="Permalink to this headline">¶</a></h1>
+<p>Snakemake GRASS interface.</p>
+<dl class="class">
+<dt id="snakemake_grass.GrassLocation">
+<em class="property">class </em><code class="sig-prename descclassname">snakemake_grass.</code><code class="sig-name descname">GrassLocation</code><span class="sig-paren">(</span><em class="sig-param">database</em>, <em class="sig-param">location_name</em>, <em class="sig-param">dafault_mapset='PERMANENT'</em>, <em class="sig-param">epsg=None</em>, <em class="sig-param">location_file=None</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.GrassLocation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Representation of a GRASS location.</p>
+<dl class="method">
+<dt id="snakemake_grass.GrassLocation.clean_output">
+<code class="sig-name descname">clean_output</code><span class="sig-paren">(</span><em class="sig-param">paths='{output}'</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.GrassLocation.clean_output" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="snakemake_grass.GrassLocation.exec">
+<code class="sig-name descname">exec</code><span class="sig-paren">(</span><em class="sig-param">command</em>, <em class="sig-param">mapset=None</em>, <em class="sig-param">clean=True</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.GrassLocation.exec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exec grass with snakemake creating location/mapset as needed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="snakemake_grass.GrassLocation.location">
+<em class="property">property </em><code class="sig-name descname">location</code><a class="headerlink" href="#snakemake_grass.GrassLocation.location" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="snakemake_grass.GrassLocation.location_path">
+<em class="property">property </em><code class="sig-name descname">location_path</code><a class="headerlink" href="#snakemake_grass.GrassLocation.location_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="snakemake_grass.GrassLocation.map_mapset">
+<code class="sig-name descname">map_mapset</code><span class="sig-paren">(</span><em class="sig-param">name</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.GrassLocation.map_mapset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="snakemake_grass.GrassLocation.mapset">
+<code class="sig-name descname">mapset</code><span class="sig-paren">(</span><em class="sig-param">name=None</em>, <em class="sig-param">output=True</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.GrassLocation.mapset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="snakemake_grass.GrassLocation.mapset_path">
+<code class="sig-name descname">mapset_path</code><span class="sig-paren">(</span><em class="sig-param">name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.GrassLocation.mapset_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="snakemake_grass.GrassLocation.raster">
+<code class="sig-name descname">raster</code><span class="sig-paren">(</span><em class="sig-param">name</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.GrassLocation.raster" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="snakemake_grass.GrassLocation.rasters">
+<code class="sig-name descname">rasters</code><span class="sig-paren">(</span><em class="sig-param">namespattern</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.GrassLocation.rasters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="snakemake_grass.GrassLocation.vector">
+<code class="sig-name descname">vector</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">output=True</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.GrassLocation.vector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="snakemake_grass.GrassLocation.vectors">
+<code class="sig-name descname">vectors</code><span class="sig-paren">(</span><em class="sig-param">namespattern</em>, <em class="sig-param">output=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.GrassLocation.vectors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="snakemake_grass.clean_output">
+<code class="sig-prename descclassname">snakemake_grass.</code><code class="sig-name descname">clean_output</code><span class="sig-paren">(</span><em class="sig-param">pathtolocation</em>, <em class="sig-param">output_paths</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.clean_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes GRASS components from location using paths to judge what to do.</p>
+<p>This function performs cleaning that snakemake does not and to allow grass
+to create locations, mapsets, rasters and vectors. This includes:
+- remove empty location, mapset and raster directories created by snakemake
+- drop tables of vectors (only with the same name)
+- remove all ancillary raster files</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="snakemake_grass.clean_raster">
+<code class="sig-prename descclassname">snakemake_grass.</code><code class="sig-name descname">clean_raster</code><span class="sig-paren">(</span><em class="sig-param">path</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.clean_raster" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="snakemake_grass.clean_vector">
+<code class="sig-prename descclassname">snakemake_grass.</code><code class="sig-name descname">clean_vector</code><span class="sig-paren">(</span><em class="sig-param">path</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.clean_vector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove vector without using grass as snakemake partially removes it.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="snakemake_grass.input_to_map">
+<code class="sig-prename descclassname">snakemake_grass.</code><code class="sig-name descname">input_to_map</code><span class="sig-paren">(</span><em class="sig-param">index=None</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.input_to_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="snakemake_grass.output_to_map">
+<code class="sig-prename descclassname">snakemake_grass.</code><code class="sig-name descname">output_to_map</code><span class="sig-paren">(</span><em class="sig-param">index=None</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.output_to_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="snakemake_grass.path_to_map">
+<code class="sig-prename descclassname">snakemake_grass.</code><code class="sig-name descname">path_to_map</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">mapset=True</em><span class="sig-paren">)</span><a class="headerlink" href="#snakemake_grass.path_to_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn a Snakemake GRASS DB path into a GRASS map name.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">snakemake_grass  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Michel Wortmann.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.0.
+    </div>
+  </body>
+</html>

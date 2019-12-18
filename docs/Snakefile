@@ -2,14 +2,16 @@
 
     $ snakemake -f
 """
+static_files = 'basic.css nature.css pygments.css'
 
 rule docs:
     output:
-        'snakemake_grass.rst'
+        'index.html',
+        expand('_static/{f}', f=static_files.split())
     shell:
         'touch index.rst; ' +
         'sphinx-apidoc -o . .. ../tests/ ../setup.py; ' +
-        'sphinx-build -b rst . _build snakemake_grass.rst; ' +
-        'mv _build/{output[0]} . ; ' +
-        'rm -r _build index.rst modules.rst'
-    
+        'sphinx-build . _build snakemake_grass.rst; ' +
+        'mv _build/snakemake_grass.html index.html ; ' +
+        'cd _build/_static; mv '+static_files+' ../../_static; cd ../..; ' +
+        'rm -r _build *.rst'
