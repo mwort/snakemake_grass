@@ -19,10 +19,12 @@ rule new_location:
     shell: grass_ll('g.proj -p')
 
 rule new_mapset:
+    input: rules.new_location.output
     output: grass_ll.mapset('new_mapset')
     shell: grass_ll('g.region -p', mapset='new_mapset')
 
 rule new_raster:
+    input: rules.new_location.output
     output: grass_ll.raster('new_raster')
     shell: grass_ll('r.mapcalc', exp='new_raster=1')
 
@@ -35,6 +37,7 @@ rule new_rasters:
                          for i in range(3)])
 
 rule new_vector:
+    input: rules.new_location.output
     output: grass_ll.vector('new_vector')
     shell: grass_ll('v.in.region', output='new_vector')
 
@@ -48,15 +51,34 @@ rule new_vectors:
 rule new_location_mapset_raster:
     output: grass_eu.raster('test_raster@test_raster')
     shell:
-        grass_eu('r.mapcalc', exp='$(basename {output})=1', mapset='test_raster')
+        grass_eu('r.mapcalc', exp=output_to_map()+'=1', mapset='test_raster')
+
+rule raster_template:
+    input: rules.new_raster.output
+    output: grass_ll.raster('raster{i}@raster{i}')
+    shell:
+        grass_ll('r.mapcalc', mapset=output_to_map(),
+                 exp='raster{wildcards.i}={wildcards.i}')
+
+rule merged_raster:
+    input: grass_ll.rasters('raster{i}@raster{i}', i=range(6))
+    output: grass_ll.raster('merged_raster')
+    shell:
+        grass_ll('r.series', input=[input_to_map(i) for i in range(6)],
+                 method='count', output=output_to_map())
 
 rule all:
     input:
-        rules.new_location.output,
         rules.new_mapset.output,
         rules.new_rasters.output,
         rules.new_vectors.output,
-        rules.new_location_mapset_raster.output
+        rules.new_location_mapset_raster.output,
+        rules.merged_raster.output
 
 rule clean:
     shell: "rm -r "+TEST_DB
+
+rule workflow_graph:
+    input: 'Snakefile'
+    output: "{type}-{rule}.png"
+    shell: "snakemake --nolock --{wildcards.type} {wildcards.rule} | dot -T png -o {output}"
